@@ -29,6 +29,7 @@ jobs:
       - 
         name: Moses up and run
         run: |
+          cd /moses-linux
           ./moses &
           sleep 30
           cd /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/
