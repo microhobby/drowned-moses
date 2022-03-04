@@ -1,0 +1,8 @@
+
+name: Github Drowned Moses
+on: push
+jobs:
+  Update-Application:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "OI 🌊"
