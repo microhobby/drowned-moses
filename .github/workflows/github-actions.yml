@@ -26,4 +26,5 @@ jobs:
         run: |
           cd /moses-linux
           ./moses &
+          sleep 30
           ./tdskt platforms
