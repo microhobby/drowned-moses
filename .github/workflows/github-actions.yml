@@ -24,6 +24,6 @@ jobs:
       - 
         name: Moses up and run
         run: |
-          cd moses-linux
+          cd /moses-linux
           ./moses &
           ./tdskt platforms
