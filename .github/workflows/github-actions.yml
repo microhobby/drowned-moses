@@ -9,5 +9,10 @@ jobs:
         name: Checkout repo
         uses: actions/checkout@v2
       -
-        name: Build Moses container
-        run: cat ${{ github.workspace }}/README.md
+        name: Build Moses container and push
+        run: |
+          cd ${{ github.workspace }}
+          cat README.md
+          docker build -f Dockerfile -t ${{ secret.DOCKERHUB_USERNAME }}/moses .
+          docker login --username=${{ secret.DOCKERHUB_USERNAME }} --password=${{ secret.DOCKERHUB_PASSWORD }}
+          docker push ${{ secret.DOCKERHUB_USERNAME }}/moses
