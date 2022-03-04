@@ -20,4 +20,4 @@ jobs:
         name: Run moses
         run: |
           docker run --rm -d --network host ${{ secrets.DOCKERHUB_USERNAME }}/moses
-          docker run --rm -it --network host ${{ secrets.DOCKERHUB_USERNAME }}/moses tdskt platforms
+          docker run --rm -t --network host ${{ secrets.DOCKERHUB_USERNAME }}/moses tdskt platforms
