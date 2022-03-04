@@ -7,4 +7,4 @@ jobs:
     steps:
       -
         name: Build moses Container
-        run: cat README.md
+        run: cat /github/workspace/README.md
