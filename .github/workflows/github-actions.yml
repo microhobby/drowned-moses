@@ -32,8 +32,10 @@ jobs:
         name: Moses up and run
         run: |
           cd ${{ github.workspace }}/moses-linux
+          chmod +x moses
+          chmod +x tdskt
           ./moses &
-          ln -s ${{ github.workspace }}/moses-linux/tdskt /usr/bin/tdskt
+          export PATH="${{ github.workspace }}/moses-linux:$PATH"
           sleep 15
           cd ${{ github.workspace }}
           cat README.md
