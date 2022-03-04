@@ -2,26 +2,28 @@
 name: Github Drowned Moses
 on: push
 jobs:
-  Update-moses:
-    runs-on: ubuntu-latest
-    steps:
-      -
-        name: Checkout repo
-        uses: actions/checkout@v2
-      -
-        name: Build Moses container and push
-        run: |
-          cd ${{ github.workspace }}
-          cat README.md
-          docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/moses .
-          docker login --username=${{ secrets.DOCKERHUB_USERNAME }} --password=${{ secrets.DOCKERHUB_PASSWORD }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/moses
+  # Update-moses:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     -
+  #       name: Checkout repo
+  #       uses: actions/checkout@v2
+  #     -
+  #       name: Build Moses container and push
+  #       run: |
+  #         cd ${{ github.workspace }}
+  #         cat README.md
+  #         docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/moses .
+  #         docker login --username=${{ secrets.DOCKERHUB_USERNAME }} --password=${{ secrets.DOCKERHUB_PASSWORD }}
+  #         docker push ${{ secrets.DOCKERHUB_USERNAME }}/moses
+# if you want to access the repo
+  # container:
+  #     image: matheuscastello/moses
+  #     options: --user root
+# cd /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/
   Build-app:
     needs: Update-moses
     runs-on: ubuntu-latest
-    container:
-      image: matheuscastello/moses
-      options: --user root
     steps:
       -
         name: Checkout repository
@@ -29,10 +31,11 @@ jobs:
       - 
         name: Moses up and run
         run: |
-          cd /moses-linux
+          cd ${{ github.workspace }}/moses-linux
           ./moses &
-          sleep 30
-          cd /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/
+          ln -s ${{ github.workspace }}/moses-linux/tdskt /usr/bin/tdskt
+          sleep 15
+          cd ${{ github.workspace }}
           cat README.md
           tdskt platforms
           tdskt eula nxp-la-opt-v5 setprop accepted true
