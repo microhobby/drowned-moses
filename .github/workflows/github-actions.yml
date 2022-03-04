@@ -23,6 +23,7 @@ jobs:
 # cd /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/
   Build-app:
     # needs: Update-moses
+    timeout-minutes: 360
     runs-on: ubuntu-latest
     steps:
       -
@@ -37,8 +38,16 @@ jobs:
           ./moses &
           export PATH="${{ github.workspace }}/moses-linux:$PATH"
           sleep 15
-          cd ${{ github.workspace }}
-          cat README.md
+          cd ${{ github.workspace }}/drowned-moses
           tdskt platforms
           tdskt eula nxp-la-opt-v5 setprop accepted true
           tdskt platforms
+          tdskt -p enableemulation
+          APPID=$(tdskt load ./appconfig_0/)
+          tdskt -p application $APPID runsdk release
+          docker run --rm -t \
+            -v ${PWD}:/app \
+            drowned-moses_arm64v8-qt5-vivante-no-ssh_bullseye_release_${APPID}_sdk_image \
+            bash -c "cd /app && make"
+          ls ./appconfig_0/work/drowned-moses
+          # tdskt -p application $APPID build release
