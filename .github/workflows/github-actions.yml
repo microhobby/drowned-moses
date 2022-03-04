@@ -6,6 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
-        name: Build moses Container
+        name: Checkout repo
         uses: actions/checkout@v2
+      -
+        name: Build Moses container
         run: cat ${{ github.workspace }}/README.md
