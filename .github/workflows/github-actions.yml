@@ -21,6 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     container: { image: matheuscastello/moses }
     steps:
+      -
+        name: Checkout repo
+        uses: actions/checkout@v2
       - 
         name: Moses up and run
         run: |
