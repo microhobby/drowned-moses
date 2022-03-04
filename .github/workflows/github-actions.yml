@@ -16,3 +16,8 @@ jobs:
           docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/moses .
           docker login --username=${{ secrets.DOCKERHUB_USERNAME }} --password=${{ secrets.DOCKERHUB_PASSWORD }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/moses
+      - 
+        name: Run moses
+        run: |
+          docker run --rm -d --network host ${{ secrets.DOCKERHUB_USERNAME }}/moses
+          docker run --rm -it --network host ${{ secrets.DOCKERHUB_USERNAME }}/moses tdskt platforms
