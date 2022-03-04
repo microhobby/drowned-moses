@@ -22,7 +22,7 @@ jobs:
   #     options: --user root
 # cd /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/
   Build-app:
-    needs: Update-moses
+    # needs: Update-moses
     runs-on: ubuntu-latest
     steps:
       -
