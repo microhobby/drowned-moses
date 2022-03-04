@@ -2,7 +2,7 @@
 name: Github Drowned Moses
 on: push
 jobs:
-  Update-Appllication:
+  Update-moses:
     runs-on: ubuntu-latest
     steps:
       -
@@ -16,9 +16,22 @@ jobs:
           docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/moses .
           docker login --username=${{ secrets.DOCKERHUB_USERNAME }} --password=${{ secrets.DOCKERHUB_PASSWORD }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/moses
+  Build-app:
+    runs-on: ubuntu-latest
+    container:
+      image: matheuscastello/moses
+      options: --user root
+    steps:
+      -
+        name: Checkout repository
+        uses: actions/checkout@v2
       - 
-        name: Run moses
+        name: Moses up and run
         run: |
-          docker run --rm -d --network host ${{ secrets.DOCKERHUB_USERNAME }}/moses
+          ./moses &
           sleep 30
-          docker run --rm -t --network host ${{ secrets.DOCKERHUB_USERNAME }}/moses tdskt platforms
+          cd ${{ github.workspace }}
+          cat README.md
+          tdskt platforms
+          tdskt eula nxp-la-opt-v5 setprop accepted true
+          tdskt platforms
