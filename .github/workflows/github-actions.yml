@@ -17,11 +17,13 @@ jobs:
           docker login --username=${{ secrets.DOCKERHUB_USERNAME }} --password=${{ secrets.DOCKERHUB_PASSWORD }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/moses
   Build-app:
+    needs: Update-moses
     runs-on: ubuntu-latest
     container: { image: matheuscastello/moses }
     steps:
       - 
         name: Moses up and run
         run: |
-          moses &
-          tdskt platforms
+          cd moses-linux
+          ./moses &
+          ./tdskt platforms
