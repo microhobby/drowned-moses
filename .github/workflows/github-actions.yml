@@ -33,8 +33,6 @@ jobs:
         name: Moses up and run
         run: |
           cd ${{ github.workspace }}/moses-linux
-          chmod +x moses
-          chmod +x tdskt
           ./moses &
           export PATH="${{ github.workspace }}/moses-linux:$PATH"
           sleep 15
@@ -47,7 +45,13 @@ jobs:
           tdskt -p application $APPID runsdk release
           docker run --rm -t \
             -v ${PWD}:/app \
+            -e QMAKE_DESTIDIR='/app/appconfig_0/work/drowned-moses' \
             drowned-moses_arm64v8-qt5-vivante-no-ssh_bullseye_release_${APPID}_sdk_image \
             bash -c "cd /app && make"
           ls ./appconfig_0/work/drowned-moses
-          # tdskt -p application $APPID build release
+          tdskt -p application $APPID build release
+          docker login --username=${{ secrets.DOCKERHUB_USERNAME }} --password=${{ secrets.DOCKERHUB_PASSWORD }}
+          docker tag \
+            drowned-moses_arm64v8-qt5-vivante-no-ssh_bullseye_release_${APPID}:latest \
+            ${{ secrets.DOCKERHUB_USERNAME }}/drowned-moses:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/drowned-moses:latest
