@@ -1,0 +1,78 @@
+devices:
+    common: []
+    debug: []
+    release: []
+dockercomposefile:
+    common: ''
+    debug: ''
+    release: ''
+extraparms:
+    common: {}
+    debug: {}
+    release: {}
+id: 00000000-0000-0000-0000-000000000000
+images:
+    debug: sha256:d913c46cdf0c7150885e775c0a75b5c16bfcf46c1305f62550c0bb9160aabf89
+    release: ''
+imagetags:
+    debug: drowned-moses_arm64v8-qt5-vivante-no-ssh_bullseye_debug_00000000-0000-0000-0000-000000000000
+    release: drowned-moses_arm64v8-qt5-vivante-no-ssh_bullseye_release_00000000-0000-0000-0000-000000000000
+modificationdate: '2022-03-03T20:42:39.547285'
+networks:
+    common: []
+    debug: []
+    release: []
+platformid: arm64v8-qt5-vivante-no-ssh_bullseye
+ports:
+    common: {}
+    debug: {}
+    release: {}
+privatekey: ''
+props:
+    common:
+        appname: drowned-moses
+        arg: ''
+        buildcommands: ''
+        buildfiles: ''
+        command: ''
+        devpackages: qtdeclarative5-dev:#%platform.debian-arch%# libegl-dev:#%platform.debian-arch%#
+            libgl-dev:#%platform.debian-arch%#
+        env: ''
+        exename: drowned-moses
+        expose: ''
+        extrapackages: qml-module-qtquick2 qml-module-qtquick-window2
+        language: c-cpp-nossh
+        preinstallcommands: ''
+        sdkpostinstallcommands: ''
+        sdkpreinstallcommands: ''
+        targetcommands: ''
+        targetfiles: ''
+    debug:
+        arg: 'ARG SSHUSERNAME=#%application.username%#
+
+            '
+    release: {}
+publickey: ''
+sdkimages:
+    debug: sha256:f43ade72b4bdcb699f84b80bbde9104bac181aa72b7f41b167dd8094cbb77152
+    release: ''
+sdkimagetags:
+    debug: drowned-moses_arm64v8-qt5-vivante-no-ssh_bullseye_debug_00000000-0000-0000-0000-000000000000_sdk_image
+    release: drowned-moses_arm64v8-qt5-vivante-no-ssh_bullseye_release_00000000-0000-0000-0000-000000000000_sdk_image
+sdksshaddress:
+    debug: null
+    release: null
+shutdownscript:
+    common: ''
+    debug: ''
+    release: ''
+startupscript:
+    common: ''
+    debug: ''
+    release: ''
+username: torizon
+volumes:
+    common: {}
+    debug:
+        /home/torizon/drowned-moses: /drowned-moses,rw
+    release: {}
