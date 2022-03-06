@@ -2,56 +2,69 @@
 name: Github Drowned Moses
 on: push
 jobs:
-  # Update-moses:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     -
-  #       name: Checkout repo
-  #       uses: actions/checkout@v2
-  #     -
-  #       name: Build Moses container and push
-  #       run: |
-  #         cd ${{ github.workspace }}
-  #         cat README.md
-  #         docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/moses .
-  #         docker login --username=${{ secrets.DOCKERHUB_USERNAME }} --password=${{ secrets.DOCKERHUB_PASSWORD }}
-  #         docker push ${{ secrets.DOCKERHUB_USERNAME }}/moses
-# if you want to access the repo
-  # container:
-  #     image: matheuscastello/moses
-  #     options: --user root
-# cd /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/
   Build-app:
-    # needs: Update-moses
     timeout-minutes: 360
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/drowned-moses
     steps:
       -
         name: Checkout repository
         uses: actions/checkout@v2
-      - 
-        name: Moses up and run
+      -
+        name: Moses Up
         run: |
           cd ${{ github.workspace }}/moses-linux
+          echo "${{ github.workspace }}/moses-linux" >> $GITHUB_PATH
           ./moses &
-          export PATH="${{ github.workspace }}/moses-linux:$PATH"
           sleep 15
-          cd ${{ github.workspace }}/drowned-moses
+      -
+        name: EULA Accept
+        run: |
           tdskt platforms
           tdskt eula nxp-la-opt-v5 setprop accepted true
           tdskt platforms
+      -
+        name: Enable Emulation
+        run: |
           tdskt -p enableemulation
+      -
+        name: Load Application
+        run: |
           APPID=$(tdskt load ./appconfig_0/)
-          tdskt -p application $APPID runsdk release
+          echo "APPID=$APPID" >> $GITHUB_ENV
+      -
+        name: Build SDK Container
+        run: |
+          tdskt -p application ${{ env.APPID }} runsdk release
+      -
+        name: Build Application
+        run: |
           docker run --rm -t \
             -v ${PWD}:/app \
+            -e AR="aarch64-linux-gnu-ar" \
+            -e AS="aarch64-linux-gnu-as" \
+            -e CC="aarch64-linux-gnu-gcc" \
+            -e CXX="aarch64-linux-gnu-g++" \
+            -e CPP="aarch64-linux-gnu-cpp" \
+            -e STRIP="aarch64-linux-gnu-strip" \
+            -e LD="aarch64-linux-gnu-ld" \
+            -e CROSS_COMPILE="aarch64-linux-gnu-" \
+            -e QMAKE="aarch64-linux-gnu-qmake" \
+            -e QT_INCLUDES="/usr/include/aarch64-linux-gnu/qt5" \
             -e QMAKE_DESTIDIR='/app/appconfig_0/work/drowned-moses' \
             drowned-moses_arm64v8-qt5-vivante-no-ssh_bullseye_release_${APPID}_sdk_image \
-            bash -c "cd /app && make"
-          ls ./appconfig_0/work/drowned-moses
-          tdskt -p application $APPID build release
+            bash -c "cd /app && aarch64-linux-gnu-qmake drowned-moses.pro && make"
+      -
+        name: Build Release Container
+        run: |
+          tdskt -p application ${{ env.APPID }} build release
+      -
+        name: Dockerhub
+        run: |
           docker login --username=${{ secrets.DOCKERHUB_USERNAME }} --password=${{ secrets.DOCKERHUB_PASSWORD }}
           docker tag \
-            drowned-moses_arm64v8-qt5-vivante-no-ssh_bullseye_release_${APPID}:latest \
+            drowned-moses_arm64v8-qt5-vivante-no-ssh_bullseye_release_${{ env.APPID }}:latest \
             ${{ secrets.DOCKERHUB_USERNAME }}/drowned-moses:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/drowned-moses:latest
