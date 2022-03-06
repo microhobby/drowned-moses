@@ -40,7 +40,7 @@ props:
         env: ''
         exename: drowned-moses
         expose: ''
-        extrapackages: qml-module-qtquick2 qml-module-qtquick-window2
+        extrapackages: qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtquick-controls
         language: c-cpp-nossh
         preinstallcommands: ''
         sdkpostinstallcommands: ''
